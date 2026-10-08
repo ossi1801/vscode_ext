@@ -1,0 +1,68 @@
+{
+  "idle": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 4,
+    "frameDurationMs": 260,
+    "loop": true,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  },
+  "moving": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 4,
+    "frameDurationMs": 140,
+    "loop": true,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  },
+  "magic": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 6,
+    "frameDurationMs": 140,
+    "loop": false,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  },
+  "disappear": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 6,
+    "frameDurationMs": 110,
+    "loop": false,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  },
+  "appear": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 6,
+    "frameDurationMs": 110,
+    "loop": false,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  },
+  "speaking": {
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 4,
+    "frameDurationMs": 140,
+    "loop": true,
+    "anchor": {
+      "x": 16,
+      "y": 28
+    }
+  }
+}

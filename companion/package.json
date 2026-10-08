@@ -1,0 +1,15 @@
+{
+  "name": "merlin-desktop",
+  "version": "0.3.0",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron --ozone-platform=x11 ."
+  },
+  "devDependencies": {
+    "electron": "^44.7.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

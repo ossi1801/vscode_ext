@@ -1,0 +1,10 @@
+node_modules/
+dist/
+# Bundled Electron runtime (generated/downloaded locally).
+/companion/runtime/
+*.vsix
+
+*.tar.gz
+__pycache__/
+
+.test-artifacts/

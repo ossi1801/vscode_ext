@@ -1,0 +1,10 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {ReactionGate,selectDiagnostic,userLine}=require('../dist/test/diagnostics.js');
+const {Animation}=require('../dist/test/animation.js');
+const issue=(line=9,severity=0,message='unexpected token')=>({severity,range:{start:{line}},message});
+test('errors take priority and diagnostic index nine is line ten',()=>{assert.equal(userLine(selectDiagnostic([issue(0,1),issue()],true)),10);assert.equal(selectDiagnostic([issue(0,1)],false),undefined);});
+test('cooldown, duplicate suppression, and resolution',()=>{const g=new ReactionGate();assert.deepEqual(g.evaluate('a',[issue()],false,0,1000),{kind:'error',line:10});assert.equal(g.evaluate('a',[issue()],false,1500,1000),undefined);assert.equal(g.evaluate('a',[],false,500,1000),undefined);assert.deepEqual(g.evaluate('a',[],false,1000,1000),{kind:'resolved'});assert.equal(g.evaluate('a',[],false,3000,1000),undefined);});
+test('switching document discards pending resolutions',()=>{const g=new ReactionGate();g.evaluate('a',[issue()],false,0,1000);assert.equal(g.evaluate('b',[],false,2000,1000),undefined);assert.deepEqual(g.evaluate('b',[issue(2)],false,2000,1000),{kind:'error',line:3});});
+test('warnings are optional and do not cause resolved-error jokes',()=>{const g=new ReactionGate();assert.equal(g.evaluate('a',[issue(4,1)],false,0,0),undefined);assert.deepEqual(g.evaluate('a',[issue(4,1)],true,0,0),{kind:'warning',line:5});assert.equal(g.evaluate('a',[],true,1,0),undefined);});
+test('animation actions finish, loops continue and transitions reset frames',()=>{const a=new Animation();a.set('magic');assert.equal(a.tick(839),false);assert.equal(a.tick(1),true);a.set('disappear');assert.equal(a.frame,0);assert.equal(a.tick(660),true);a.set('appear');assert.equal(a.tick(660),true);a.set('moving');assert.equal(a.tick(10000),false);assert.ok(a.frame<4);a.set('speaking');assert.equal(a.frame,0);});

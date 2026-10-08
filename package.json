@@ -1,0 +1,217 @@
+{
+  "name": "merlin-companion",
+  "displayName": "Merlin",
+  "description": "An animated pixel wizard companion with friendly diagnostic reactions.",
+  "version": "0.6.1",
+  "publisher": "merlin-local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "license": "MIT",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:merlin.companion"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node test/core.test.cjs && node test/desktop.test.mjs && node test/companion.test.cjs && node test/features.test.cjs && node test/speech.test.cjs",
+    "companion:check": "node scripts/check-desktop.mjs",
+    "package": "node scripts/package.mjs",
+    "build:native": "node scripts/build-native.mjs",
+    "package:portable": "npm run build && node scripts/package-portable.mjs"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.5.0",
+    "esbuild": "^0.24.0",
+    "@vscode/vsce": "^3.0.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "merlin.show",
+        "title": "Merlin: Show Companion"
+      },
+      {
+        "command": "merlin.pause",
+        "title": "Merlin: Pause / Resume"
+      },
+      {
+        "command": "merlin.magic",
+        "title": "Merlin: Perform Magic"
+      },
+      {
+        "command": "merlin.speak",
+        "title": "Merlin: Speak"
+      },
+      {
+        "command": "merlin.dismiss",
+        "title": "Merlin: Dismiss Speech Bubble"
+      },
+      {
+        "command": "merlin.startCompanion",
+        "title": "Merlin: Start Overlay"
+      },
+      {
+        "command": "merlin.stopCompanion",
+        "title": "Merlin: Stop Overlay"
+      },
+      {
+        "command": "merlin.toggleOverlay",
+        "title": "Merlin: Hide / Show Overlay"
+      },
+      {
+        "command": "merlin.toggleVoice",
+        "title": "Merlin: Mute / Unmute Voice"
+      },
+      {
+        "command": "merlin.testVoice",
+        "title": "Merlin: Test Voice"
+      },
+      {
+        "command": "merlin.selectVoice",
+        "title": "Merlin: Select Voice"
+      },
+      {
+        "command": "merlin.companionStatus",
+        "title": "Merlin: Status"
+      },
+      {
+        "command": "merlin.explainError",
+        "title": "Merlin: Read Suggested Fix"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "merlin",
+          "title": "Merlin",
+          "icon": "media/hat.svg"
+        }
+      ]
+    },
+    "views": {
+      "merlin": [
+        {
+          "type": "webview",
+          "id": "merlin.companion",
+          "name": "Merlin"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Merlin",
+      "properties": {
+        "merlin.diagnosticReactions": {
+          "type": "boolean",
+          "default": true,
+          "description": "React to active document diagnostics."
+        },
+        "merlin.warningReactions": {
+          "type": "boolean",
+          "default": false,
+          "description": "React to warnings when no errors exist."
+        },
+        "merlin.reactionCooldown": {
+          "type": "number",
+          "default": 15,
+          "description": "Seconds between diagnostic reactions.",
+          "minimum": 0,
+          "maximum": 300
+        },
+        "merlin.speechDuration": {
+          "type": "number",
+          "default": 5,
+          "description": "Minimum speech duration in seconds.",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "merlin.movementSpeed": {
+          "type": "number",
+          "default": 48,
+          "description": "Walking speed in pixels per second.",
+          "minimum": 0,
+          "maximum": 300
+        },
+        "merlin.reducedMotion": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable roaming and animated sprite changes."
+        },
+        "merlin.characterScale": {
+          "type": "number",
+          "default": 3,
+          "description": "Pixel-art character scale.",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "merlin.displayMode": {
+          "type": "string",
+          "enum": [
+            "overlay",
+            "desktop",
+            "sidebar"
+          ],
+          "default": "overlay",
+          "description": "Overlay draws directly over code inside VS Code, including Flatpak and Wayland. Desktop uses an optional native window (requires X11 on Linux). Sidebar uses a webview."
+        },
+        "merlin.voice.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable audible local speech. Muting cancels current playback."
+        },
+        "merlin.voice.provider": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "bundled",
+            "chromium"
+          ],
+          "default": "auto",
+          "description": "Editor overlay uses bundled Linux speech or the built-in macOS/Windows engine. Desktop/sidebar modes also support optional Chromium voices."
+        },
+        "merlin.voice.id": {
+          "type": "string",
+          "default": "",
+          "description": "Bundled voice identifier; empty uses English."
+        },
+        "merlin.voice.rate": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0.5,
+          "maximum": 2,
+          "description": "Local speech rate."
+        },
+        "merlin.voice.pitch": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Local speech pitch."
+        },
+        "merlin.voice.volume": {
+          "type": "number",
+          "default": 0.6,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Local speech volume."
+        },
+        "merlin.roamingWidth": {
+          "type": "number",
+          "default": 500,
+          "minimum": 80,
+          "maximum": 1600,
+          "description": "Horizontal roaming distance in pixels in editor-overlay mode. Lower this for narrow editor groups; VS Code does not expose their pixel width."
+        }
+      }
+    }
+  },
+  "extensionKind": [
+    "ui"
+  ]
+}

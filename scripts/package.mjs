@@ -1,0 +1,11 @@
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+const platform = { linux: 'linux', darwin: 'darwin', win32: 'win32' }[process.platform];
+if (!platform || !['x64', 'arm64'].includes(process.arch)) throw Error('Unsupported packaging target');
+const run = file => execFileSync(process.execPath, [file], { stdio: 'inherit' });
+run('scripts/build.mjs');
+run('scripts/build-native.mjs');
+run('scripts/bundle-speech.mjs');
+run('scripts/bundle-runtime.mjs');
+const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
+execFileSync(process.execPath, ['node_modules/@vscode/vsce/vsce', 'package', '--target', `${platform}-${process.arch}`, '--no-dependencies', '--allow-missing-repository', '--out', `merlin-${version}-${platform}-${process.arch}.vsix`], { stdio: 'inherit' });

@@ -1,0 +1,71 @@
+name: Build self-contained VSIX
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+jobs:
+  portable:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: linux-x64
+          - os: ubuntu-24.04-arm
+            target: linux-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo apt-get update && sudo apt-get install -y gcc g++ cmake make libx11-dev
+      - run: npm ci
+      - run: npm run build:native
+      - run: npm test
+      - run: npm run package:portable
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merlin-portable-${{ matrix.target }}
+          path: merlin-*.vsix
+          if-no-files-found: error
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: linux-x64
+          - os: ubuntu-24.04-arm
+            target: linux-arm64
+          - os: macos-15-intel
+            target: darwin-x64
+          - os: macos-15
+            target: darwin-arm64
+          - os: windows-2022
+            target: win32-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev cmake make gcc
+      - if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-make
+          path-type: inherit
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: Add-Content $env:GITHUB_PATH 'C:\msys64\mingw64\bin'
+      - run: npm ci
+      - run: npm ci --prefix companion
+      - run: npm run package
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merlin-${{ matrix.target }}
+          path: merlin-*-${{ matrix.target }}.vsix
+          if-no-files-found: error
