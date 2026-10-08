@@ -1,4 +1,6 @@
 # Merlin
+<img width="963" height="403" alt="image" src="https://github.com/user-attachments/assets/817b0a0b-b1c8-4785-976f-de676014c0d8" />
+
 
 Install **merlin-0.6.1.vsix** using **Extensions: Install from VSIX**, then open
 a text editor. This VSIX needs no external runtime, X11 connection or additional installation.
